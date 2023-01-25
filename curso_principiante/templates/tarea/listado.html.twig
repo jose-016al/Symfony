@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tareas por hacer!{% endblock %}
+
+{% block body %}
+    <h1>Tareas por hacer</h1>
+    {% include('comunes/_mensajes.html.twig') %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, tarea in tareas %}
+                <tr>
+                    <th scope="row">{{ index + 1}}</th>
+                    <td>{{ tarea.Descripcion }}</td>
+                    <td>
+                        <a href="{{ path('app_editar_tarea', {'id': tarea.id}) }}">editar</a>
+                        <a href="{{ path('app_eliminar_tarea', {'id': tarea.id}) }}">eliminar</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th colspan="3" scope="row">No se han encontrado resultados</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
