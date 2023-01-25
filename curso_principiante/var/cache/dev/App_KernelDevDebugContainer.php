@@ -16,6 +16,6 @@ if (!\class_exists(App_KernelDevDebugContainer::class, false)) {
 
 return new \ContainerAPcDMMw\App_KernelDevDebugContainer([
     'container.build_hash' => 'APcDMMw',
-    'container.build_id' => '753d8aff',
-    'container.build_time' => 1674122958,
+    'container.build_id' => '104f2c10',
+    'container.build_time' => 1674689390,
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerAPcDMMw');
