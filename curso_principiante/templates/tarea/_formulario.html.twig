@@ -1,0 +1,9 @@
+<form method="POST" action="{{ accion}}">
+    <div>
+        <label for="descripcion">Descripcion</label>
+        <input type="text" class="form-control" id="descripcion" name="descripcion" aria-describedby="descripcion" placesholder="Descripcion" value="{{ tarea.descripcion }}">
+        <small id="descripcionAyuda" class="form-text text-muted">Descripcion de la tarea a relalizar</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ etiqueta_btn_enviar|default('Guardar') }}</button>
+</form>
