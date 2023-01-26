@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tarea index{% endblock %}
+
+{% block body %}
+    <h1>Tarea index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Descripcion</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tarea in tareas %}
+            <tr>
+                <td>{{ tarea.id }}</td>
+                <td>{{ tarea.descripcion }}</td>
+                <td>
+                    <a href="{{ path('app_tarea_show', {'id': tarea.id}) }}">show</a>
+                    <a href="{{ path('app_tarea_edit', {'id': tarea.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_tarea_new') }}">Create new</a>
+{% endblock %}

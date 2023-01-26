@@ -1,0 +1,54 @@
+{% set numero_total_paginas = (numero_total_elementos / elementos_por_pagina)|round(0, 'ceil') %}
+{% set parametros = parametros_ruta is defined ? parametros_ruta : {} %}
+{% set nombre_ruta = nombre_ruta is defined ? nombre_ruta : app.request.attributes.get('_route') %}
+
+
+{% if numero_total_paginas > 1 %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item {{ pagina_actual == 1 ? 'disabled' }}">
+                <a class="page-link"
+                    href="{{
+                        path(nombre_ruta,
+                            {
+                                pagina: pagina_actual - 1 < 1 ? 1 : pagina_actual - 1
+                            }|merge(parametros)
+                        ) 
+                    }}">
+                    <span>&laquo;</span>
+                    <span>Anterior</span>
+                </a>
+            </li>
+        
+
+            {% for i in 1..numero_total_paginas %}
+                <li class="page-item {{ pagina_actual == i ? 'active' }}">
+                    <a class="page-link"
+                        href="{{
+                            path(nombre_ruta,
+                                {
+                                    pagina:i
+                                }|merge(parametros)
+                            ) 
+                        }}">
+                        <span>{{ i }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {{ pagina_actual == numero_total_paginas ? 'disabled' }}">
+                <a class="page-link"
+                    href="{{
+                        path(nombre_ruta,
+                            {
+                                pagina: pagina_actual + 1 <= numero_total_paginas ? pagina_actual + 1 : pagina_actual
+                            }|merge(parametros)
+                        ) 
+                    }}">
+                    <span>&raquo;</span>
+                    <span>Siguiente</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}

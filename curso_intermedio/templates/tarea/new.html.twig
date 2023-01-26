@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Tarea{% endblock %}
+
+{% block body %}
+    <h1>Create new Tarea</h1>
+
+    {{ include('tarea/_form.html.twig') }}
+
+    <a href="{{ path('app_tarea_index') }}">back to list</a>
+{% endblock %}

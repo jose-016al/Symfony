@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Tarea{% endblock %}
+
+{% block body %}
+    <h1>Edit Tarea</h1>
+
+    {{ include('tarea/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_tarea_index') }}">back to list</a>
+
+    {{ include('tarea/_delete_form.html.twig') }}
+{% endblock %}
