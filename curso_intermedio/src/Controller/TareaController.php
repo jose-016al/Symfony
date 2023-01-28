@@ -6,6 +6,7 @@ use App\Entity\Tarea;
 use App\Form\TareaType;
 use App\Repository\TareaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,16 +23,15 @@ class TareaController extends AbstractController
     }
 
     #[Route('/new', name: 'app_tarea_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TareaRepository $tareaRepository): Response
+    public function new(Security $security, Request $request, TareaRepository $tareaRepository): Response
     {
         $tarea = new Tarea();
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $tarea -> setUsuario($security->getUser());
             $tareaRepository->save($tarea, true);
-
-            return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_main', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('tarea/new.html.twig', [
@@ -57,7 +57,7 @@ class TareaController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $tareaRepository->save($tarea, true);
 
-            return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_main', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('tarea/edit.html.twig', [
@@ -73,7 +73,7 @@ class TareaController extends AbstractController
             $tareaRepository->remove($tarea, true);
         }
 
-        return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_main', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'finalizar_tarea', methods: ['POST'])]

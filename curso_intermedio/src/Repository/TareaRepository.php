@@ -6,6 +6,7 @@ use App\Entity\Tarea;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @extends ServiceEntityRepository<Tarea>
@@ -17,9 +18,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TareaRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private $usuario;
+    public function __construct(Security $security ,ManagerRegistry $registry)
     {
         parent::__construct($registry, Tarea::class);
+        $this -> usuario = $security -> getUser();
     }
 
     public function paginacion($dql, $pagina, $elementosPorPagina) 
@@ -34,6 +38,9 @@ class TareaRepository extends ServiceEntityRepository
     public function buscarTodas($pagina = 1, $elementosPorPagina = 5) 
     {
         $query = $this->createQueryBuilder('t')
+            ->addOrderBy('t.creadoEn', 'DESC')
+            ->andWhere('t.usuario = :usuario')
+            ->setParameter('usuario', $this->usuario)
             ->getQuery()
         ;
         return $this -> paginacion($query, $pagina, $elementosPorPagina);

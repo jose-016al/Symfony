@@ -1,25 +1,40 @@
 # symfony 5 
 
 # Tabla de contenidos
-- [Comandos basicos para un proyecto con symfony](#comandos-basicos-para-empezar-un-proyecto-con-symfony)
-  - [creacion de un proyecto](#creacion-del-proyecto-e-instalacion-de-componentes)
+- [Arrancar un proyecto ya existente](#arrancar-un-proyecto-ya-existente)
+- [creacion de un proyecto](#creacion-del-proyecto-e-instalacion-de-componentes)
+  - [Crear entidad y repositorio (migration)](#crear-entidad-y-repositorio-migration)
+  - [Gestion de la BBDD](#gestion-de-la-bbdd)
   - [generar un controlador](#generar-un-controlador)
+  - [Crear un crud](#crear-un-crud)
+  - [Usuarios](#usuarios)
+    - [Registro](#el-registro)
+    - [Login](#el-login)
+    - [Roles](#los-roles)
   - [Añadir recursos externos para fronted](#añadir-recursos-externos-para-front)
     - [Crear un menu con bootstrap en twig](#crear-un-menu-con-bootstrap)
-  - [Gestion de la BBDD](#gestion-de-la-bbdd)
-  - [Crear entidad y repositorio (migration)](#crear-entidad-y-repositorio-migration)
-  - [Crear un crud](#crear-un-crud)
-  - [Generar datos de prueba](#generar-datos-de-prueba)
   - [Paginacion](#paginacion)
-   - [Paginacion en twig](#paginacion-en-twig)
-
+    - [Paginacion en twig](#paginacion-en-twig)
+  - [Generar datos de prueba](#generar-datos-de-prueba)
 
 La extructura de las directorios  
 ![directorios](.img/directorios.png)
 
-# Comandos basicos para empezar un proyecto con symfony 
+# Arrancar un proyecto ya existente
+Instalamos composer 
+```powershell
+composer install
+```
+Generamos nuestro propio archivo.env.local y creamos la base de datos
+```powershell
+php bin/console doctrine:database:create
+```
+Ejecutamos todos los fciheros de migracion que tengamos en nuestro sistema
+```powershell
+php bin/console doctrine:schema:create
+```
 
-## Creacion del proyecto e instalacion de componentes
+# Creacion del proyecto e instalacion de componentes
 Para crear un nuevo proyecto 
 ```powershell
 symfony new curso_principiante --webapp
@@ -39,15 +54,134 @@ symfony server:start
 Para acceder al servidor nos dirigimos al navegador a traves de la direccion que nos genera http://127.0.0.1:8000
 ![web_principal](.img/web_principal.png)
 
-## Generar un controlador 
+## Crear entidad y repositorio (migration)
+Al crear una entidad nos pedira el nombre de la entidad, sus propiedades, tipo, tamaño y si puede ser nulo
+```powershell
+php bin/console make:entity
+```
+Simpre que se cree o se modifique una entidad se debe realizar una migracion
+```powershell
+php bin/console make:migration
+```
+```powershell
+php bin/console doctrine:migrations:migrate
+```
 
+## Gestion de la BBDD 
+Deberemos modificar el fichero .env, para añadir usuario, contraseña y el nombre de la base de datos quedando de la sigueinte forma
+```powershell
+DATABASE_URL="mysql://root:@127.0.0.1:3306/curso_principiante?serverVersion=8&charset=utf8mb4"
+```
+Para crear la base de datos no dirigimos a al simbolo del sistema y ejecutamos el siguiente comando
+```powershell
+php bin/console doctrine:database:create
+```
+Una vez creada la base de datos subimos las entidades que tengamos 
+```powershell
+php bin/console doctrine:schema:create
+```
+Para eliminar una base de datos
+```powershell
+php bin/console doctrine:schema:drop
+```
+
+## Generar un controlador 
 Para generar un controlador. Nos pedira el nombre del controlador y nos genera el controlador y la vista
 ```powershell
 php bin/console make:controller
 ```
 
-## Añadir recursos externos para front
+## Crear un crud
+La creacion de un crud nos crea tanto los contraladores como las vistas
+```powershell
+php bin/console make:crud nombre_entidad
+```
 
+## Usuarios
+Creamos la entidad usuario
+```powershell
+php bin/console make:user
+```
+Generamos el crud de la entidad usuario
+```powershell
+php bin7console make:crud User
+```
+Debemos modificar el fichero UserType la parte de roles, ya que si no nos dara un fallo de conversion, la clase quedara de la siguiente forma
+```php
+<?php
+
+namespace App\Form;
+
+use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\CallbackTransformer;
+
+class UserType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('username')
+            ->add('Roles', ChoiceType::class, [
+                'required' => true,
+                'multiple' => false,
+                'expanded' => false,
+                'choices'  => [
+                  'User' => 'ROLE_USER',
+                  'Admin' => 'ROLE_ADMIN',
+                ],
+            ])
+            ->add('password');
+
+        // Data transformer
+        $builder->get('Roles')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($rolesArray) {
+                     // transform the array to a string
+                     return count($rolesArray)? $rolesArray[0]: null;
+                },
+                function ($rolesString) {
+                     // transform the string back to an array
+                     return [$rolesString];
+                }
+        ));
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+        ]);
+    }
+}
+```
+Para seleccionar el uusario actual desde el controlador de la entidad donde queremos que salga el usuario, por ejemplo al crear una nueva tarea para que dicha tarea tenga al usuario por defecto que la crea, en la funcion de new_tarea añadimos esta linea 
+```php
+$tarea -> setUsuario($security->getUser());
+```
+
+### El registro
+Para generar el registro de usuarios con su correpondiente vista
+```powershell
+php bin/console make:registration-form
+```
+
+### El login
+Para generar el login 
+```powershell
+php bin/console make:auth
+```
+
+### Los roles
+Para denegar el acceso a una funcion en concreto 
+```php
+$this -> denyAccessUnlessGranted('ROLE_ADMIN');
+```
+
+## Añadir recursos externos para front
 Para añadir recursos externos como bootstrap, nos dirigimos a la web oficial y descaargamos  [Bootstrap](https://getbootstrap.com/docs/4.3/getting-started/download/ "Bootstrap") compilado y copiamos los directorios de css y js en el directorio de public  
 Una vez copiado realizamos las llamadas desde el archivo base en templates, quedando el archivo de la siguiente forma
 ```html
@@ -108,68 +242,7 @@ Creamos un fichero llamado _menu.html.twig. Una vez ralizado lo incluimos en el 
 ```
 Nos dirigimos a la web de bootstrap y copiamos en el fichero de _menu el menu
 
-## Gestion de la BBDD 
-
-Deberemos modificar el fichero .env, para añadir usuario, contraseña y el nombre de la base de datos quedando de la sigueinte forma
-```powershell
-DATABASE_URL="mysql://root:@127.0.0.1:3306/curso_principiante?serverVersion=8&charset=utf8mb4"
-```
-Para crear la base de datos no dirigimos a al simbolo del sistema y ejecutamos el siguiente comando
-```powershell
-php bin/console doctrine:database:create
-```
-Una vez creada la base de datos subimos las entidades que tengamos 
-```powershell
-php bin/console doctrine:schema:create
-```
-Para eliminar una base de datos
-```powershell
-php bin/console doctrine:schema:drop
-```
-
-## Crear entidad y repositorio (migration)
-
-Al crear una entidad nos pedira el nombre de la entidad, sus propiedades, tipo, tamaño y si puede ser nulo
-```powershell
-php bin/console make:entity
-```
-Simpre que se cree o se modifique una entidad se debe realizar una migracion
-```powershell
-php bin/console make:migration
-```
-```powershell
-php bin/console doctrine:migrations:migrate
-```
-
-# Crear un crud
-La creacion de un crud nos crea tanto los contraladores como las vistas
-```powershell
-php bin/console make:crud nombre_entidad
-```
-
-# Generar datos de prueba
-
-```powershell
-composer require orm-fixtures --dev
-```
-Nos genera un directorio en src llamado DataFixtures, en el eliminamos el archivo que nos ha generado y generamos el nuestro
-```powershell
-php bin/console make:fixtures 
-```
-Creamos un for con los datos a mostrar
-```php
-for ($i = 0; $i < 20; $i++) { 
-  $tarea = new Tarea();
-  $tarea -> setDescripcion("Tarea nueva - $i");
-  $manager -> persist($tarea);
-}
-```
-y cargamos el archivo
-```powershell
-php bin/console doctrine:fixtures:load
-```
-
-# Paginacion 
+## Paginacion 
 Generamos el controlador principal, MainController
 ```powershell
 php bin/console make:controller
@@ -213,7 +286,7 @@ class MainController extends AbstractController
 }
 ```
 
-## Paginacion en twig
+### Paginacion en twig
 Para dar un foramato a la paginacion creamos una sita parcial en templates/comunes "_paginacion.html.twig"
 ```php
 {% set numero_total_paginas = (numero_total_elementos / elementos_por_pagina)|round(0, 'ceil') %}
@@ -281,174 +354,24 @@ y hacemos la llamada con el include desde donde queremos la paginacion
   }) }}
 </div>
 ```
-```powershell
 
+## Generar datos de prueba
+```powershell
+composer require orm-fixtures --dev
 ```
+Nos genera un directorio en src llamado DataFixtures, en el eliminamos el archivo que nos ha generado y generamos el nuestro
 ```powershell
-
+php bin/console make:fixtures 
 ```
-```powershell
-
+Creamos un for con los datos a mostrar
+```php
+for ($i = 0; $i < 20; $i++) { 
+  $tarea = new Tarea();
+  $tarea -> setDescripcion("Tarea nueva - $i");
+  $manager -> persist($tarea);
+}
 ```
+y cargamos el archivo
 ```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
-```
-```powershell
-
+php bin/console doctrine:fixtures:load
 ```
