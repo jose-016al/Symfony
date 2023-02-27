@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articulos{% endblock %}
+
+{% block body %}
+    <h1>Articulos</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ articulo.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ articulo.title }}</td>
+            </tr>
+            <tr>
+                <th>Contenido</th>
+                <td>{{ articulo.contenido }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Visible</th>
+                <td>{{ articulo.visible ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Imagen</th>
+                <td>{{ articulo.imagen }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_articulos_index') }}">back to list</a>
+
+    <a href="{{ path('app_articulos_edit', {'id': articulo.id}) }}">edit</a>
+
+    {{ include('articulos/_delete_form.html.twig') }}
+{% endblock %}

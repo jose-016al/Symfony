@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block body %}
+
+    <div>
+        {% for articulo in articulos %}
+            <h2>{{ articulo.title }}</h2>
+            <p>{{ articulo.contenido }}</p>
+        {% else %}
+            <h3 class="text-center">No se han encontrado articulos</h3>
+        {% endfor %}
+    </div>
+
+{% endblock %}

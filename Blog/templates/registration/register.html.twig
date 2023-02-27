@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-5">
+        <h2 class="text-center pt-5 mb-5">Registro</h2>
+
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_label(registrationForm.username) }}
+                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword, 'Password') }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-check ml-auto my-3">
+                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'} }) }}
+                {{ form_label(registrationForm.agreeTerms, '¿Aceptas las condiciones?', {'label_attr': {'class': 'form-check-label'} }) }}
+            </div>
+
+            <div class="d-grid">
+                <input type="submit" class="btn btn-primary" name="logeo" value="Registrarse">
+            </div>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}

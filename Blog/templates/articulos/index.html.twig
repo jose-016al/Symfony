@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articulos index{% endblock %}
+
+{% block body %}
+    <h1>Articulos index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Contenido</th>
+                <th>Fecha</th>
+                <th>Visible</th>
+                <th>Imagen</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for articulo in articulos %}
+            <tr>
+                <td>{{ articulo.id }}</td>
+                <td>{{ articulo.title }}</td>
+                <td>{{ articulo.contenido }}</td>
+                <td>{{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ articulo.visible ? 'Yes' : 'No' }}</td>
+                <td>{{ articulo.imagen }}</td>
+                <td>
+                    <a href="{{ path('app_articulos_show', {'id': articulo.id}) }}">show</a>
+                    <a href="{{ path('app_articulos_edit', {'id': articulo.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_articulos_new') }}">Create new</a>
+{% endblock %}
