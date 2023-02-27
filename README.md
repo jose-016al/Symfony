@@ -104,7 +104,7 @@ php bin/console make:user
 ```
 Generamos el crud de la entidad usuario
 ```powershell
-php bin7console make:crud User
+php bin/console make:crud User
 ```
 Debemos modificar el fichero UserType la parte de roles, ya que si no nos dara un fallo de conversion, la clase quedara de la siguiente forma
 ```php
@@ -168,11 +168,117 @@ Para generar el registro de usuarios con su correpondiente vista
 ```powershell
 php bin/console make:registration-form
 ```
+Si queremos personalizar el registro
+```php
+{% extends 'base.html.twig' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-5">
+        <h2 class="text-center pt-5 mb-5">Registro</h2>
+
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_label(registrationForm.username) }}
+                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword, 'Password') }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-check ml-auto my-3">
+                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'} }) }}
+                {{ form_label(registrationForm.agreeTerms, '¿Aceptas las condiciones?', {'label_attr': {'class': 'form-check-label'} }) }}
+            </div>
+
+            <div class="d-grid">
+                <input type="submit" class="btn btn-primary" name="logeo" value="Registrarse">
+            </div>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}
+```
 
 ### El login
 Para generar el login 
 ```powershell
 php bin/console make:auth
+```
+Es importante tener en cuenta que el login nos tiene que redirigir a algun ruta que debemos establecer nosotros en SecurityController o como lo hayamos llamado
+```php
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // if ($this->getUser()) {
+        //     return $this->redirectToRoute('target_path');
+        // }
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+```
+Si queremos personalizar el login
+```php
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-5">
+        <h2 class="text-center pt-5 mb-5">Bienvenido</h2>
+        
+        <form method="post">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <label for="inputUsername">Username</label>
+            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
+        </div>
+        <div class="mb-4">
+            <label for="inputPassword">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+        </div>
+        <div class="d-grid">
+            <input type="submit" class="btn btn-primary" name="logeo" value="Iniciar sesion">
+        </div>
+        <div class="my-3">
+            <span>¿No tienes cuenta? <a href="{{ path('app_register') }}">Crea tu cuenta</a></span>
+        </div>
+
+        <input type="hidden" name="_csrf_token"
+            value="{{ csrf_token('authenticate') }}"
+        >
+
+        {#
+            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+            See https://symfony.com/doc/current/security/remember_me.html
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Remember me
+                </label>
+            </div>
+        #}
+        </form> 
+    </div>
+</div>
+{% endblock %}
 ```
 
 ### Los roles
@@ -232,7 +338,7 @@ cd templates
 mkdir comunes
 ```
 Creamos un fichero llamado _menu.html.twig. Una vez ralizado lo incluimos en el fichero base.html.twig de la siguiente forma y creamos un div, quedara de la siguiente forma
-```php
+```html
 <body>
   {% include "comunes/_menu.html.twig" %}
   <div class="container">
@@ -240,7 +346,25 @@ Creamos un fichero llamado _menu.html.twig. Una vez ralizado lo incluimos en el 
   </div>
 </body>
 ```
-Nos dirigimos a la web de bootstrap y copiamos en el fichero de _menu el menu
+Un ejemplo de menu ppodria ser algo asi
+```html
+<header class="row justify-content-between align-items-center pb-3">
+	<h1 class="col-auto"><a class="text-dark nav-link" href="{{ path('app_main') }}">Blog</a></h1>
+	<nav class="col-auto navbar-expand">	
+		<ul class="navbar-nav ml-auto">
+            {% if is_granted('ROLE_USER') %}
+			    <li class="nav-item"><a class="nav-link" href="{{ path('app_articulos_new') }}">Crear articulo</a></li>
+			{% endif %}
+            {% if app.user %}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}">Cerrar sesion</a></li>
+            {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
+            {% endif %}
+		</ul>
+	</nav>
+</header>
+```
+Pero tambien podemos buscar algun menu en la pagina de bootstrap
 
 ## Paginacion 
 Generamos el controlador principal, MainController
