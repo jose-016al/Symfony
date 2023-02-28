@@ -14,10 +14,7 @@ class ArticulosType extends AbstractType
         $builder
             ->add('title')
             ->add('contenido')
-            ->add('fecha')
-            ->add('visible')
             ->add('imagen')
-            ->add('user')
         ;
     }
 

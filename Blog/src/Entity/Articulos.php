@@ -32,6 +32,11 @@ class Articulos
     #[ORM\ManyToOne(inversedBy: 'articulos')]
     private ?User $user = null;
 
+    public function __construct() {
+        $this -> fecha = new \DateTime();
+        $this -> visible = true;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -108,4 +113,5 @@ class Articulos
 
         return $this;
     }
+
 }

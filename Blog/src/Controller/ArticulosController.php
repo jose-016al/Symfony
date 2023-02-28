@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Articulos;
 use App\Form\ArticulosType;
 use App\Repository\ArticulosRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +23,10 @@ class ArticulosController extends AbstractController
     }
 
     #[Route('/new', name: 'app_articulos_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ArticulosRepository $articulosRepository): Response
+    public function new(Security $security, Request $request, ArticulosRepository $articulosRepository): Response
     {
         $articulo = new Articulos();
+        $articulo -> setUser($security->getUser());
         $form = $this->createForm(ArticulosType::class, $articulo);
         $form->handleRequest($request);
 
