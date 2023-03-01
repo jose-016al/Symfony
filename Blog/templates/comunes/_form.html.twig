@@ -1,0 +1,18 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-md-5">
+    {{ form_start(form) }}
+        {% for field in form %}
+            <div class="form-group">
+                {{ form_row(field, {'attr': {'class': 'form-control', 'placeholder': field.vars.label}}) }}
+                {% if form_errors(field) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(field) }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    {{ form_end(form) }}
+    </div>
+</div>

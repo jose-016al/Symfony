@@ -4,13 +4,22 @@
 
 {% block body %}
 
-    <div>
+    <div class="row justify-content-center my-3">
+        <div class="col-12 col-md-8">
         {% for articulo in articulos %}
-            <h2>{{ articulo.title }}</h2>
+            <h2 class="text-center">{{ articulo.title }}</h2>
             <p>{{ articulo.contenido }}</p>
+            {% if articulo.imagen %}
+                <img class="mx-auto d-block" src="{{ asset('imagenes/' ~ articulo.imagen) }}" alt="imagen" width="80%">
+            {% endif %}
+            <div class="row justify-content-around">
+                <p class="col-auto">Autor: {{ articulo.user }}</p>
+                <p class="col-auto">Fecha: {{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</p>
+            </div>
         {% else %}
             <h3 class="text-center">No se han encontrado articulos</h3>
         {% endfor %}
+        </div>
     </div>
 
 {% endblock %}

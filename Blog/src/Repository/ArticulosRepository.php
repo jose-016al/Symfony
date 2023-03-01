@@ -39,6 +39,15 @@ class ArticulosRepository extends ServiceEntityRepository
         }
     }
 
+    public function findOrderDate(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.fecha', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Articulos[] Returns an array of Articulos objects
 //     */

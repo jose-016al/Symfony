@@ -17,7 +17,7 @@ class Articulos
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column]
     private ?string $contenido = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -112,6 +112,11 @@ class Articulos
         $this->user = $user;
 
         return $this;
+    }
+
+    public function _construct()
+    {
+        return $this -> fecha;
     }
 
 }

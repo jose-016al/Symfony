@@ -14,7 +14,7 @@ class MainController extends AbstractController
     public function index(ArticulosRepository $articulosRepository): Response
     {
         return $this->render('MainView.html.twig', [
-            'articulos' => $articulosRepository->findAll(),
+            'articulos' => $articulosRepository->findOrderDate(),
         ]);
     }
 }
