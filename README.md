@@ -11,11 +11,15 @@
     - [Registro](#el-registro)
     - [Login](#el-login)
     - [Roles](#los-roles)
+  - [Fechas](#fechas)
+  - [Imagenes](#imagenes)
+  - [Formularios](#formularios)
   - [Añadir recursos externos para fronted](#añadir-recursos-externos-para-front)
     - [Crear un menu con bootstrap en twig](#crear-un-menu-con-bootstrap)
   - [Paginacion](#paginacion)
     - [Paginacion en twig](#paginacion-en-twig)
   - [Generar datos de prueba](#generar-datos-de-prueba)
+- [EasyAdmin](#easyadmin)
 
 La extructura de las directorios  
 ![directorios](.img/directorios.png)
@@ -282,9 +286,130 @@ Si queremos personalizar el login
 ```
 
 ### Los roles
-Para denegar el acceso a una funcion en concreto 
+Para denegar el acceso a una funcion en concreto para que sola puedan entrar los admin
 ```php
 $this -> denyAccessUnlessGranted('ROLE_ADMIN');
+```
+Para no permitir el acceso a una funcion a un usuario que no este registrado
+```php
+$this -> denyAccessUnlessGranted('ROLE_USER');
+```
+
+## Fechas
+Cuando queremos dar una fecha podemos dejar la fecha actual como valor por defecto, de esta forma cada vez que creemos un articulo se le asigna la fecha actual, desde el controlador de la entidad
+```php
+public function __construct() {
+    $this -> fecha = new \DateTime();
+}
+```
+Para poder mostar las fhecas debemos darle un formato desde twig
+```php
+<p class="col-auto">Fecha: {{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</p>
+```
+Si queremos filtar por la fecha mas reciente podemos crear una funcion en el repositorio, y llamarla desde el controlador
+```php
+public function findOrderDate(): array
+{
+    return $this->createQueryBuilder('a')
+        ->orderBy('a.fecha', 'DESC')
+        ->getQuery()
+        ->getResult()
+    ;
+}
+```
+
+## Imagenes
+Partimos de una entidad que tenga un campo String, para guardar la imagen, podemos seguir la documentacin de [symfony](https://symfony.com/doc/current/controller/upload_file.html). Lo primero que haremos sera modificar el campo que tenemos desde el formulario para que sea un FileType
+```php
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
+->add('imagen', FileType::class, [
+    'label' => 'Imagen para el articulo',
+    'mapped' => false,
+    'required' => false,
+    'constraints' => [
+        new File([
+            'maxSize' => '1024k',
+            'mimeTypes' => [
+                'image/jpeg',
+                'image/png',
+            ],
+            'mimeTypesMessage' => 'Por favor sube una imagen'
+        ])
+    ],
+])
+```
+Lo siguiente sera modificar la funcion de creacin de articulo para gestionar la subida de la imagen a la base de datos
+```php
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
+// Devemos añadir como parametro SluggerInterface $slugger
+if ($form->isSubmitted() && $form->isValid()) {
+
+    // Esto debe estar dentro del condicional que valida el formulario
+    $imagen = $form->get('imagen')->getData();
+
+    if ($imagen) {
+        $originalFilename = pathinfo($imagen->getClientOriginalName(), PATHINFO_FILENAME);
+
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$imagen->guessExtension();
+
+        try {
+            $imagen->move(
+                $this->getParameter('imagen_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            // ... handle exception if something happens during file upload
+        }
+
+        $articulo->setImagen($newFilename);
+    }
+    $articulosRepository->save($articulo, true);
+
+    return $this->redirectToRoute('app_main', [], Response::HTTP_SEE_OTHER);
+}
+```
+Creamos el directorio donde se guardaran las imagenes y creamos el parametro en config/services.yaml
+```php
+parameters:
+    imagen_directory: '%kernel.project_dir%/public/imagenes'
+```
+
+## Formularios
+Para modifcar un campo de texto a un textArea, desde el formularpio donde este el campo a modificar
+```php
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+
+// ->add('contenido')
+->add('contenido', TextareaType::class, [
+    'required' => true,
+    'attr' => ['rows' => 5]
+])
+```
+Podemos crear una plantilla twig para que todos los formularios tengan los mismos estilos, para ello creamos un fichero en la carpeta comunes llamado _form.html.twig
+```php
+<div class="row justify-content-center">
+    <div class="col-12 col-md-5">
+    {{ form_start(form) }}
+        {% for field in form %}
+            <div class="form-group">
+                {{ form_row(field, {'attr': {'class': 'form-control', 'placeholder': field.vars.label}}) }}
+                {% if form_errors(field) %}
+                    <div class="invalid-feedback">
+                        {{ form_errors(field) }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    {{ form_end(form) }}
+    </div>
+</div>
 ```
 
 ## Añadir recursos externos para front
@@ -498,4 +623,18 @@ for ($i = 0; $i < 20; $i++) {
 y cargamos el archivo
 ```powershell
 php bin/console doctrine:fixtures:load
+```
+
+# EasyAdmin
+Este es un bundle que nos permitira generar una pagina de administracion muy util
+```powershell
+composer require easycorp/easyadmin-bundle
+```
+Generamos un Dashboard, que nos permitra controlar toda la gestion, sera como nuestra pagina principal
+```powershell
+php bin/console make:admin:dashboard
+```
+Creamos un crud por cada entidad que tengamos, nos mostrara una lista y estos cruds sera los enalces del menu
+```powershell
+php bin/console make:admin:crud
 ```
