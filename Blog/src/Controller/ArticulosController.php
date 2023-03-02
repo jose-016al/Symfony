@@ -78,9 +78,9 @@ class ArticulosController extends AbstractController
     #[Route('/{id}/edit', name: 'app_articulos_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Articulos $articulo, ArticulosRepository $articulosRepository): Response
     {
+        $this -> denyAccessUnlessGranted('ROLE_ADMIN');
         $form = $this->createForm(ArticulosType::class, $articulo);
         $form->handleRequest($request);
-        $this -> denyAccessUnlessGranted('ROLE_ADMIN');
         if ($form->isSubmitted() && $form->isValid()) {
             $articulosRepository->save($articulo, true);
 

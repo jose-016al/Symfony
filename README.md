@@ -373,7 +373,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     return $this->redirectToRoute('app_main', [], Response::HTTP_SEE_OTHER);
 }
 ```
-Creamos el directorio donde se guardaran las imagenes y creamos el parametro en config/services.yaml
+Creamos el directorio donde se guardaran las imagenes dentro de public y creamos el parametro en config/services.yaml
 ```php
 parameters:
     imagen_directory: '%kernel.project_dir%/public/imagenes'
