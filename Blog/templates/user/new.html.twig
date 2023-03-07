@@ -3,8 +3,5 @@
 {% block title %}New User{% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Crear nuevo usuario</h1>
-
-    {{ include('comunes/_form.html.twig') }}
-
+    {% include 'comunes/_form.html.twig' with {'titulo': 'Crear nuevo usuario'} %}
 {% endblock %}

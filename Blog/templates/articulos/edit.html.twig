@@ -3,13 +3,5 @@
 {% block title %}Edit Articulos{% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Editar Articulo</h1>
-
-    {{ include('comunes/_form.html.twig', {'button_label': 'Actualizar'}) }}
-
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
-            {{ include('articulos/_delete_form.html.twig') }}
-        </div>
-    </div>
+    {% include 'comunes/_form.html.twig' with {'titulo': 'Editar articulo'} %}
 {% endblock %}

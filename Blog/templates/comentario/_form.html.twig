@@ -1,0 +1,6 @@
+{% block form %}
+    {{ form_start(form) }}
+    {% set comentarioRendered = form_row(form.comentario) %}
+    {{ comentarioRendered }}
+    {{ form_end(form) }}
+{% endblock %}

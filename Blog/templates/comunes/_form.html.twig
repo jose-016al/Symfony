@@ -1,5 +1,6 @@
 <div class="row justify-content-center">
-    <div class="col-12 col-md-5">
+    <div class="col-12 col-md-5" id="container">
+    <h1 class="text-center">{{ titulo }}</h1>
     {{ form_start(form) }}
         {% for field in form %}
             <div class="form-group">
@@ -12,7 +13,7 @@
             </div>
         {% endfor %}
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary my-3">Guardar</button>
     {{ form_end(form) }}
     </div>
 </div>

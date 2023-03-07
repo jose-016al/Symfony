@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Articulos</h1>
 
-    <table class="table">
+    <table class="table" id="container">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -34,9 +34,8 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_articulos_index') }}">back to list</a>
-
-    <a href="{{ path('app_articulos_edit', {'id': articulo.id}) }}">edit</a>
-
-    {{ include('articulos/_delete_form.html.twig') }}
+    <div class="row">
+        <a class="btn btn-primary" href="{{ path('app_articulos_edit', {'id': articulo.id}) }}">Editar</a>
+        {{ include('articulos/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

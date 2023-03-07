@@ -638,3 +638,47 @@ Creamos un crud por cada entidad que tengamos, nos mostrara una lista y estos cr
 ```powershell
 php bin/console make:admin:crud
 ```
+Debemos configurar el dahsboard para mostrar los cruds que generamos, una vez generado el crud dberia quedar de la siguiente manera
+```php
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+
+#[Route('/admin', name: 'admin')]
+public function index(): Response
+{
+    // return parent::index();
+
+    // Option 1. You can make your dashboard redirect to some common page of your backend
+    //
+    $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+    return $this->redirect($adminUrlGenerator->setController(ArticulosCrudController::class)->generateUrl());
+
+}
+```
+Es posible que nos de algun fallo por trabajar con fechas si ese es elcaso debemos habilitar "PHP Intl", en el caso de xampp, nos dirigimos a config/PHP (PHP.ini) y desde ahi buscar la linea ";extension=intl" y quitarlee el punto y coma
+```php
+extension=intl
+```
+Para el menu en el dashboard tenemos una funcino para ello 
+```php
+public function configureMenuItems(): iterable
+{
+    yield MenuItem::linkToDashboard('Articulos', 'fa fa-home');
+    yield MenuItem::linkToCrud('User', 'fas fa-list', User::class);
+}
+```
+Para personalizar los campos que se muestran en easyÁdmin lo haremos desde el crud
+```php
+public function configureFields(string $pageName): iterable
+{
+    return [
+        TextField::new('username'),
+        TextField::new('password'),
+        ChoiceField::new('roles', 'Roles')
+        ->setChoices([
+            'Admin' => 'ROLE_ADMIN',
+            'User' => 'ROLE_USER',
+        ])
+        ->allowMultipleChoices(true),
+    ];
+}
+```

@@ -3,8 +3,7 @@
 {% block title %}New Articulos{% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Crear nuevo articulo</h1>
-
-    {{ include('comunes/_form.html.twig') }}
+    
+    {% include 'comunes/_form.html.twig' with {'titulo': 'Crear nuevo articulo'} %}
 
 {% endblock %}

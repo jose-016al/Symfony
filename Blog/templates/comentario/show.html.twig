@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comentario{% endblock %}
+
+{% block body %}
+    <h1>Comentario</h1>
+
+    <table class="table" id="container">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ comentario.id }}</td>
+            </tr>
+            <tr>
+                <th>Comentario</th>
+                <td>{{ comentario.comentario }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ comentario.fecha ? comentario.fecha|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Visible</th>
+                <td>{{ comentario.visible ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row">
+        <a class="btn btn-primary" href="{{ path('app_comentario_edit', {'id': comentario.id}) }}">Editar</a>
+        {{ include('comentario/_delete_form.html.twig') }}
+    </div>
+    
+
+{% endblock %}

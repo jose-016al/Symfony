@@ -3,13 +3,5 @@
 {% block title %}Edit User{% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Editar usuario</h1>
-
-    {{ include('comunes/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
-            {{ include('user/_delete_form.html.twig') }}
-        </div>
-    </div>
+    {% include 'comunes/_form.html.twig' with {'titulo': 'Editar usuario'} %}
 {% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comentario index{% endblock %}
+
+{% block body %}
+    <h1>Comentario index</h1>
+
+    <table class="table" id="container">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Comentario</th>
+                <th>Fecha</th>
+                <th>Visible</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comentario in comentarios %}
+            <tr>
+                <td>{{ comentario.id }}</td>
+                <td>{{ comentario.comentario }}</td>
+                <td>{{ comentario.fecha ? comentario.fecha|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ comentario.visible ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_comentario_show', {'id': comentario.id}) }}">show</a>
+                    <a href="{{ path('app_comentario_edit', {'id': comentario.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_comentario_new') }}">Create new</a>
+{% endblock %}

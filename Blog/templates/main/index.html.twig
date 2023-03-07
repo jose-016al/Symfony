@@ -1,20 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}Blog{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="row justify-content-center mb-3">
+        {% for articulo in articulos %}
+        <div class="col-12 col-md-8" id="container">
+            <a href="{{ path('app_main_show', {'id': articulo.id}) }}">
+                <h1 class="text-center border-top">{{ articulo.title }}</h1>
+            </a>
+            <p>{{ articulo.contenido }}</p>
+            {% if articulo.imagen %}
+                <img class="mx-auto d-block" src="{{ asset('imagenes/' ~ articulo.imagen) }}" alt="imagen" width="80%">
+            {% endif %}
+            <div class="row justify-content-around">
+                <p class="col-auto">Autor: {{ articulo.user }}</p>
+                <p class="col-auto">Fecha: {{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</p>
+            </div>
+        </div>
+        {% else %}
+            <h3 class="text-center">No se han encontrado articulos</h3>
+        {% endfor %}
+        </div>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'D:/github/Symfony/Blog/src/Controller/MainController.php'|file_link(0) }}">src/Controller/MainController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'D:/github/Symfony/Blog/templates/main/index.html.twig'|file_link(0) }}">templates/main/index.html.twig</a></code></li>
-    </ul>
-</div>
 {% endblock %}

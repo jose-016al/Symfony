@@ -4,11 +4,8 @@
 
 {% block body %}
     <div class="row justify-content-center mb-3">
-        {% for articulo in articulos %}
         <div class="col-12 col-md-8" id="container">
-            <a href="{{ path('app_articulos_show', {'id': articulo.id}) }}">
-                <h1 class="text-center border-top">{{ articulo.title }}</h1>
-            </a>
+            <h1 class="text-center border-top">{{ articulo.title }}</h1>
             <p>{{ articulo.contenido }}</p>
             {% if articulo.imagen %}
                 <img class="mx-auto d-block" src="{{ asset('imagenes/' ~ articulo.imagen) }}" alt="imagen" width="80%">
@@ -17,8 +14,19 @@
                 <p class="col-auto">Autor: {{ articulo.user }}</p>
                 <p class="col-auto">Fecha: {{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</p>
             </div>
+            <h2>Comentarios</h2>
+            {% if is_granted('ROLE_USER') %}
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_widget(form.comentario, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(form.articulo, {'attr': {'style': 'display:none;'}}) }}
+                    </div>
+                    <div class="d-grid my-3">
+                        <input type="submit" class="btn btn-primary" name="logeo" value="Comentar">
+                    </div>
+                {{ form_end(form) }}
+            {% endif %}
             {% for comentario in articulo.getComentarios() %}
-                <h2>Comentarios</h2>
                 <div class="row justify-content-around align-items-center">
                     <div class="border-right col-3 text-center">
                         <p>{{ comentario.usuario }}</p>
@@ -30,9 +38,6 @@
                 <h4 class="text-center">Se el primero en comentar</h4>
             {% endfor %}
             </div>
-        {% else %}
-            <h3 class="text-center">No se han encontrado articulos</h3>
-        {% endfor %}
         </div>
     </div>
 
