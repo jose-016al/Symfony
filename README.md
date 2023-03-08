@@ -20,6 +20,7 @@
     - [Paginacion en twig](#paginacion-en-twig)
   - [Generar datos de prueba](#generar-datos-de-prueba)
 - [EasyAdmin](#easyadmin)
+- [Conexion Symfony/React](#conexion-symfony-con-react)
 
 La extructura de las directorios  
 ![directorios](.img/directorios.png)
@@ -393,7 +394,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 Podemos crear una plantilla twig para que todos los formularios tengan los mismos estilos, para ello creamos un fichero en la carpeta comunes llamado _form.html.twig
 ```php
 <div class="row justify-content-center">
-    <div class="col-12 col-md-5">
+    <div class="col-12 col-md-5" id="container">
+    <h1 class="text-center">{{ titulo }}</h1>
     {{ form_start(form) }}
         {% for field in form %}
             <div class="form-group">
@@ -406,10 +408,14 @@ Podemos crear una plantilla twig para que todos los formularios tengan los mismo
             </div>
         {% endfor %}
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary my-3">Guardar</button>
     {{ form_end(form) }}
     </div>
 </div>
+```
+En la plantilla del formulario he añadido un h1 con una variable llamado titulo, al hacer el include le pasaremos el titulo
+```php
+{% include 'comunes/_form.html.twig' with {'titulo': 'Crear nuevo articulo'} %}
 ```
 
 ## Añadir recursos externos para front
@@ -682,3 +688,5 @@ public function configureFields(string $pageName): iterable
     ];
 }
 ```
+
+# Conexion symfony con react
