@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Salida{% endblock %}
+
+{% block body %}
+    <h1>Edit Salida</h1>
+
+    {{ include('salida/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_salida_index') }}">back to list</a>
+
+    {{ include('salida/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Objeto index{% endblock %}
+
+{% block body %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ubicacion</th>
+                <th>Disponible</th>
+                <th>Total</th>
+                <th>Descripcion</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for objeto in objetos %}
+            <tr>
+                <td>{{ objeto.ubicacion }}</td>
+                <td>{{ objeto.cantidad }}</td>
+                <td>{{ objeto.total }}</td>
+                <td>{{ objeto.descripcion }}</td>
+                <td>
+                    <a href="{{ path('app_entrada_objeto', {'id': objeto.id}) }}">Entrada</a>
+                    <a href="{{ path('app_salida_objeto', {'id': objeto.id}) }}">Salida</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">No se han encontrado objetos</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

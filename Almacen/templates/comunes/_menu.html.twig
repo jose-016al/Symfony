@@ -1,0 +1,18 @@
+<header class="row justify-content-between align-items-center pb-3">
+	<h1 class="col-auto"><a class="text-dark nav-link" href="{{ path('app_main') }}">Almacen</a></h1>
+	<nav class="col-auto navbar-expand">	
+		<ul class="navbar-nav ml-auto">
+            {% if is_granted('ROLE_JEFE') %}
+			    <li class="nav-item"><a class="nav-link" href="{{ path('app_objeto_new') }}">Añadir objeto</a></li>
+			{% endif %}
+            {% if app.user %}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}">Cerrar sesion</a></li>
+            {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
+            {% endif %}
+			{% if is_granted('ROLE_ADMIN') %}
+				{# <li class="nav-item"><a class="nav-link bg-primary" href="{{ path('admin') }}" target="_blank">Admin</a></li> #}
+			{% endif %}
+		</ul>
+	</nav>
+</header>
